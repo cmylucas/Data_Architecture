@@ -36,12 +36,7 @@ def main():
             num = int(file.readline())
             numbers.append(num)
     print(f"Reading took {(time.time() - start_time) / 60} minutes")
-    
-    jobs = []
-    for i in range(20):
-        job = cluster.submit(random.randint(5, 20))
-        jobs.append(job)
-    # cluster.wait() # waits until all jobs finish
+
     for job in jobs:
         host, n = job()  # waits for job to finish and returns results
         print('%s executed job %s at %s with %s' % (host, job.id, job.start_time, n))
