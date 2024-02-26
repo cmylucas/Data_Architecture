@@ -25,11 +25,13 @@ def main():
 
     print(file_path)
     numbers = []
+    jobs = []
     start_time = time.time()
     with open(file_path, 'r') as file:
         for x in range(N):
-            if x % n == 0:
+            if x % n == 0 and not x == 0:
                 job = cluster.submit(numbers)
+                jobs.append(job)
                 numbers = []
             num = int(file.readline())
             numbers.append(num)
