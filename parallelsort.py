@@ -38,7 +38,6 @@ def join_two(key1, key2):
             ikey1 += 1
             x += 1
 
-    print(a_res)
     return a_res
 
 def bubble(arr):
@@ -59,17 +58,22 @@ def recomb(subarr):
     subarr = [subarr.copy()]
     index = 0
     for layer in range(math.ceil(math.log2(length))):
-        next = []
+        nextlayer = []
         for x in range(0, len(subarr[index]), 2):
             if x == len(subarr[index])-1 and len(subarr[index]) % 2 == 1:
-                next.append(subarr[index][x])
+                nextlayer.append(subarr[index][x])
             else:
                 key1 = subarr[index][x]
                 key2 = subarr[index][x+1]
-                next.append(join_two(key1, key2))
-        subarr.append(next)
+                nextlayer.append(join_two(key1, key2))
+        subarr.append(nextlayer)
         index += 1
     return subarr[-1]
+
+def write_array_to_file(path, arr):
+    with open(path, 'w') as file:
+        for number in arr:
+            file.write(f"{number}\n")
 
 def main():
     cluster = dispy.JobCluster(bubble, nodes = nodes, host = "192.168.10.1")
@@ -91,15 +95,17 @@ def main():
     for job in jobs:
         arr, host = job()
         subarr.append(arr)
-        print(f'{host} executed job {job.id}: {arr}')
+        print(f'{host} executed job {job.id}')
         # print('%s executed job %s at %s with %s' % (host, job.id, job.start_time, n))
         # other fields of 'job' that may be useful:
         # job.stdout, job.stderr, job.exception, job.ip_addr, job.end_time
-
     cluster.print_status()
-
-    sortedlist = recomb(subarr)
-    print(sortedlist)
+    sorting_time = time.time()
+    print("Sorting separately finished")
+    sortedlist = recomb(subarr)[0]
+    print(f"Recombining took {(time.time() - sorting_time) / 60} minutes")
+    # print(sortedlist)
+    write_array_to_file("parallelsorted.txt", sortedlist)
     print(f"Sorting {N} numbers with {n} subdivisions took {(time.time() - start_time)/60} minutes")
 
 
