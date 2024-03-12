@@ -83,12 +83,15 @@ def main():
     start_time = time.time()
     with open(file_path, 'r') as file:
         for x in range(N):
-            if x % int(N/n) == 0 and not x == 0:
+            if x % math.ceil(N/n) == 0 and not x == 0:
                 job = cluster.submit(numbers)
                 jobs.append(job)
                 numbers = []
             num = int(file.readline())
             numbers.append(num)
+            if x == N-1:
+                job = cluster.submit(numbers)
+                jobs.append(job)
     print(f"Reading took {(time.time() - start_time) / 60} minutes")
     subarr =[]
     for job in jobs:
