@@ -95,6 +95,7 @@ def main():
     print(f"Reading took {(time.time() - start_time) / 60} minutes")
     subarr =[]
     for job in jobs:
+        print("new job")
         arr, host = job()
         subarr.append(arr)
         print(f'{host} executed job {job.id}')
