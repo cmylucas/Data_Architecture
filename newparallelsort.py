@@ -52,22 +52,6 @@ def bubble(arr):
             return (arr, hostname)
     return (arr, hostname)
 
-def recomb(subarr):
-    length = len(subarr)
-    subarr = [subarr.copy()]
-    index = 0
-    for layer in range(math.ceil(math.log2(length))):
-        nextlayer = []
-        for x in range(0, len(subarr[index]), 2):
-            if x == len(subarr[index])-1 and len(subarr[index]) % 2 == 1:
-                nextlayer.append(subarr[index][x])
-            else:
-                key1 = subarr[index][x]
-                key2 = subarr[index][x+1]
-                nextlayer.append(join_two(key1, key2))
-        subarr.append(nextlayer)
-        index += 1
-    return subarr[-1]
 
 def write_array_to_file(path, arr):
     with open(path, 'w') as file:
@@ -86,22 +70,36 @@ def main():
         for x in range(N):
             if x % math.ceil(N/n) == 0 and not x == 0:
                 index += 1
-            with open(f"/mnt/shared/segment{index}", 'w') as file:
+            with open(f"/mnt/shared/segment{index}.txt", 'a') as file:
                 num = int(file.readline())
                 file.write(f"{num}\n")
     for i in range(index + 1):
-        job = cluster.submit(f"/mnt/shared/segment{i}")
+        job = cluster.submit(f"/mnt/shared/segment{i}.txt")
         jobs.append(job)
     print(f"Reading took {(time.time() - start_time) / 60} minutes")
-    subarr =[]
+    stored_path = "/mnt/shared/final.txt"
+    temp_path = "/mnt/shared/temp.txt"
     for job in jobs:
-        print("new job")
-        arr, host = job()
-        subarr.append(arr)
+        segment_path, host = job()
         print(f'{host} executed job {job.id}')
-        # print('%s executed job %s at %s with %s' % (host, job.id, job.start_time, n))
-        # other fields of 'job' that may be useful:
-        # job.stdout, job.stderr, job.exception, job.ip_addr, job.end_time
+        # Recombine segment_path into stored_path
+        with open(temp_path, r) as temp, open(segment_path, r) as segment, open(stored_path, w) as output:
+            num1 = int(temp.readline())
+            num2 = int(segment.readline())
+            while num1 and num2:
+                if num1 <= num2:
+                    output.write(f"{num1}\n")
+                    num1 = int(temp.readline())
+                else:
+                    output.write(f"{num2}\n")
+                    num2 = int(temp.readline())
+            while num1:
+                output.write(f"{num1}\n")
+                num1 = int(temp.readline())
+            while num2:
+                output.write(f"{num2}\n")
+                num2 = int(temp.readline())
+    
     cluster.print_status()
     sorting_time = time.time()
     print("Sorting separately finished")
