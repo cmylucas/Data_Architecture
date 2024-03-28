@@ -60,8 +60,10 @@ def main():
         print(f'{host} executed job {job.id}')
         # Recombine segment_path into stored_path
         with open(temp_path, 'r') as temp, open(segment_path, 'r') as segment, open(stored_path, 'w') as output:
-            num1 = int(temp.readline())
-            num2 = int(segment.readline())
+            num1 = temp.readline()
+            num2 = segment.readline()
+            if num1 != '':
+                num1 = int(num1)
             while num1 and num2:
                 if num1 <= num2:
                     output.write(f"{num1}\n")
@@ -74,7 +76,7 @@ def main():
                 num1 = int(temp.readline())
             while num2:
                 output.write(f"{num2}\n")
-                num2 = int(temp.readline())
+                num2 = int(segment.readline())
         shutil.copyfile(stored_path, temp_path)
     
     cluster.print_status()
