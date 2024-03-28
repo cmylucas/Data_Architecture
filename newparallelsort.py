@@ -46,9 +46,11 @@ def main():
                 index += 1
             with open(f"/mnt/shared/segment{index}.txt", 'a') as file:
                 num = int(input.readline())
+                print(num)
                 file.write(f"{num}\n")
     for i in range(index + 1):
         job = cluster.submit(f"/mnt/shared/segment{i}.txt")
+        print(f"/mnt/shared/segment{i}.txt")
         jobs.append(job)
     print(f"Reading took {(time.time() - start_time) / 60} minutes")
 
