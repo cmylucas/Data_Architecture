@@ -40,12 +40,12 @@ def main():
     jobs = []
     index = 0
     start_time = time.time()
-    with open(file_path, 'r') as file:
+    with open(file_path, 'r') as input:
         for x in range(N):
             if x % math.ceil(N/n) == 0 and not x == 0:
                 index += 1
             with open(f"/mnt/shared/segment{index}.txt", 'a') as file:
-                num = int(file.readline())
+                num = int(input.readline())
                 file.write(f"{num}\n")
     for i in range(index + 1):
         job = cluster.submit(f"/mnt/shared/segment{i}.txt")
