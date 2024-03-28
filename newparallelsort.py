@@ -59,7 +59,7 @@ def main():
         segment_path, host = job()
         print(f'{host} executed job {job.id}')
         # Recombine segment_path into stored_path
-        with open(temp_path, r) as temp, open(segment_path, r) as segment, open(stored_path, w) as output:
+        with open(temp_path, 'r') as temp, open(segment_path, 'r') as segment, open(stored_path, 'w') as output:
             num1 = int(temp.readline())
             num2 = int(segment.readline())
             while num1 and num2:
