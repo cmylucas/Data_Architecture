@@ -11,6 +11,7 @@ n = int(sys.argv[2]) # Number of divisions
 nodes = ["192.168.10.10", "192.168.10.20", "192.168.10.30", "192.168.10.40"]
 
 def bubble(path):
+    arr =[]
     with open(path, 'r') as file:
         arr.append(int(file.readline()))
     length = len(arr)
@@ -44,18 +45,16 @@ def main():
         for x in range(N):
             if x % math.ceil(N/n) == 0 and not x == 0:
                 index += 1
-            with open(f"/mnt/shared/segment{index}.txt", 'a') as file:
+            with open(f"/mnt/shared/sorting/segment{index}.txt", 'a') as file:
                 num = int(input.readline())
-                print(num)
                 file.write(f"{num}\n")
     for i in range(index + 1):
-        job = cluster.submit(f"/mnt/shared/segment{i}.txt")
-        print(f"/mnt/shared/segment{i}.txt")
+        job = cluster.submit(f"/mnt/shared/sorting/segment{i}.txt")
         jobs.append(job)
     print(f"Reading took {(time.time() - start_time) / 60} minutes")
 
-    stored_path = "/mnt/shared/final.txt"
-    temp_path = "/mnt/shared/temp.txt"
+    stored_path = "/mnt/shared/sorting/final.txt"
+    temp_path = "/mnt/shared/sorting/temp.txt"
     for job in jobs:
         segment_path, host = job()
         print(f'{host} executed job {job.id}')
