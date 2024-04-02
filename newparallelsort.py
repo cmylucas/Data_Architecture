@@ -50,13 +50,22 @@ def main():
         for x in range(N):
             if x % math.ceil(N/n) == 0 and not x == 0:
                 index += 1
+            num = int(input.readline())
             with open(f"/mnt/shared/sorting/segment{index}.txt", 'a') as file:
-                num = int(input.readline())
+                print(f"/mnt/shared/sorting/segment{index}.txt: {num}")
                 file.write(f"{num}\n")
+                file.flush()
     for i in range(index + 1):
+        c=0
+        with open(f"/mnt/shared/sorting/segment{i}.txt", 'r') as file:
+            num = int(file.readline())
+            c+=1
+            print(num)
+        print(c)
         job = cluster.submit(f"/mnt/shared/sorting/segment{i}.txt")
         jobs.append(job)
-    print(f"Reading took {(time.time() - start_time) / 60} minutes")
+    reading_time = (time.time() - start_time) / 60
+    print(f"Reading took {reading_time} minutes")
 
     stored_path = "/mnt/shared/sorting/final.txt"
     temp_path = "/mnt/shared/sorting/temp.txt"
@@ -83,6 +92,7 @@ def main():
         shutil.copyfile(stored_path, temp_path)
     
     cluster.print_status()
+    print(f"Reading took {reading_time} minutes")
     print(f"Sorting {N} numbers with {n} subdivisions took {(time.time() - start_time)/60} minutes")
 
 
