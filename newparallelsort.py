@@ -58,9 +58,11 @@ def main():
     for i in range(index + 1):
         c=0
         with open(f"/mnt/shared/sorting/segment{i}.txt", 'r') as file:
-            num = int(file.readline())
-            c+=1
-            print(num)
+            num = checkRead(file.readline())
+            while num:
+                num = checkReadfile.readline())
+                c+=1
+                print(num)
         print(c)
         job = cluster.submit(f"/mnt/shared/sorting/segment{i}.txt")
         jobs.append(job)
