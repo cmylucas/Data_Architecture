@@ -4,6 +4,7 @@ import dispy
 import socket
 import math
 import shutil
+import os
 
 file_path = "/usb/data1.set"
 N = int(sys.argv[1]) # Total amount of numbers to sort
@@ -13,7 +14,12 @@ nodes = ["192.168.10.10", "192.168.10.20", "192.168.10.30", "192.168.10.40"]
 def bubble(path):
     arr =[]
     with open(path, 'r') as file:
-        arr.append(int(file.readline()))
+        num = checkRead(file.readline())
+        arr.append(num)
+        while num:
+            num = checkRead(file.readline())
+            arr.append(num)
+            
     length = len(arr)
     hostname = socket.gethostname()
     for i in range(length - 1):
@@ -52,20 +58,13 @@ def main():
                 index += 1
             num = int(input.readline())
             with open(f"/mnt/shared/sorting/segment{index}.txt", 'a') as file:
-                print(f"/mnt/shared/sorting/segment{index}.txt: {num}")
+                # print(f"/mnt/shared/sorting/segment{index}.txt: {num}")
                 file.write(f"{num}\n")
                 file.flush()
     for i in range(index + 1):
-        c=0
-        with open(f"/mnt/shared/sorting/segment{i}.txt", 'r') as file:
-            num = checkRead(file.readline())
-            while num:
-                num = checkReadfile.readline())
-                c+=1
-                print(num)
-        print(c)
         job = cluster.submit(f"/mnt/shared/sorting/segment{i}.txt")
         jobs.append(job)
+                
     reading_time = (time.time() - start_time) / 60
     print(f"Reading took {reading_time} minutes")
 
@@ -96,7 +95,7 @@ def main():
     cluster.print_status()
     print(f"Reading took {reading_time} minutes")
     print(f"Sorting {N} numbers with {n} subdivisions took {(time.time() - start_time)/60} minutes")
-
+    open("/mnt/shared/sorting/temp.txt", 'w').close()
 
 if __name__ == "__main__":
     main()
