@@ -11,13 +11,22 @@ N = int(sys.argv[1]) # Total amount of numbers to sort
 n = int(sys.argv[2]) # Number of divisions
 nodes = ["192.168.10.10", "192.168.10.20", "192.168.10.30", "192.168.10.40"]
 
+def checkRead(num):
+    if num != '':
+        num = int(num)
+    return num
+
 def bubble(path):
+    def checkRead2(num):
+        if num != '':
+            num = int(num)
+        return num
     arr =[]
     with open(path, 'r') as file:
-        num = checkRead(file.readline())
+        num = checkRead2(file.readline())
         arr.append(num)
         while num:
-            num = checkRead(file.readline())
+            num = checkRead2(file.readline())
             arr.append(num)
             
     length = len(arr)
@@ -38,11 +47,6 @@ def bubble(path):
         for num in arr:
             file.write(f"{num}\n")
     return (path, hostname)
-
-def checkRead(num):
-    if num != '':
-        num = int(num)
-    return num
 
 def main():
     cluster = dispy.JobCluster(bubble, nodes = nodes, host = "192.168.10.1")
