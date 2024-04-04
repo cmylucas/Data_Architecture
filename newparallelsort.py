@@ -17,18 +17,17 @@ def checkRead(num):
     return num
 
 def bubble(path):
-    def checkRead2(num):
-        if num != '':
-            num = int(num)
-        return num
     arr =[]
     with open(path, 'r') as file:
-        num = checkRead2(file.readline())
-        arr.append(num)
-        while num:
-            num = checkRead2(file.readline())
-            arr.append(num)
-            
+        for line in file:
+            number = line.strip()
+            arr.append(int(number))
+    # with open(path, 'r') as file:
+    #     num = checkRead2(file.readline())
+    #     arr.append(num)
+    #     while num:
+    #         num = checkRead2(file.readline())
+    #         arr.append(num)
     length = len(arr)
     hostname = socket.gethostname()
     for i in range(length - 1):
@@ -62,9 +61,8 @@ def main():
                 index += 1
             num = int(input.readline())
             with open(f"/mnt/shared/sorting/segment{index}.txt", 'a') as file:
-                # print(f"/mnt/shared/sorting/segment{index}.txt: {num}")
+                print(f"/mnt/shared/sorting/segment{index}.txt: {num}")
                 file.write(f"{num}\n")
-                file.flush()
     for i in range(index + 1):
         job = cluster.submit(f"/mnt/shared/sorting/segment{i}.txt")
         jobs.append(job)
@@ -74,6 +72,8 @@ def main():
 
     stored_path = "/mnt/shared/sorting/final.txt"
     temp_path = "/mnt/shared/sorting/temp.txt"
+    open(stored_path, 'w').close()
+    open(temp_path, 'w').close()
     for job in jobs:
         segment_path, host = job()
         print(f'{host} executed job {job.id}')
@@ -99,7 +99,6 @@ def main():
     cluster.print_status()
     print(f"Reading took {reading_time} minutes")
     print(f"Sorting {N} numbers with {n} subdivisions took {(time.time() - start_time)/60} minutes")
-    open("/mnt/shared/sorting/temp.txt", 'w').close()
 
 if __name__ == "__main__":
     main()
