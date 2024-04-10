@@ -5,6 +5,7 @@ import socket
 import math
 import shutil
 import os
+from tqdm import tqdm
 
 file_path = "/usb/data1.set"
 N = int(sys.argv[1]) # Total amount of numbers to sort
@@ -59,9 +60,10 @@ def main():
         for x in range(N):
             if x % math.ceil(N/n) == 0 and not x == 0:
                 index += 1
+                open(f"/mnt/shared/sorting/segment{index}.txt", 'w').close()
             num = int(input.readline())
             with open(f"/mnt/shared/sorting/segment{index}.txt", 'a') as file:
-                print(f"/mnt/shared/sorting/segment{index}.txt: {num}")
+                # print(f"/mnt/shared/sorting/segment{index}.txt: {num}")
                 file.write(f"{num}\n")
     for i in range(index + 1):
         job = cluster.submit(f"/mnt/shared/sorting/segment{i}.txt")
@@ -74,7 +76,7 @@ def main():
     temp_path = "/mnt/shared/sorting/temp.txt"
     open(stored_path, 'w').close()
     open(temp_path, 'w').close()
-    for job in jobs:
+    for job in tqdm(jobs):
         segment_path, host = job()
         print(f'{host} executed job {job.id}')
         # Recombine segment_path into stored_path
