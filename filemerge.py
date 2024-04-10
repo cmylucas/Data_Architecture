@@ -1,3 +1,8 @@
+def checkRead(num):
+    if num != '':
+        num = int(num)
+    return num
+
 def main():
     index = 11
     jobs = []
