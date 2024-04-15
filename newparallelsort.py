@@ -52,22 +52,23 @@ def main():
     cluster = dispy.JobCluster(bubble, nodes = nodes, host = "192.168.10.1")
 
     print(file_path)
-    numbers = []
+    total_numbers = 0
     jobs = []
-    index = 0
     start_time = time.time()
     with open(file_path, 'r') as input:
-        for x in range(N):
-            if x % math.ceil(N/n) == 0 and not x == 0:
-                index += 1
-                open(f"/mnt/shared/sorting/segment{index}.txt", 'w').close()
-            num = int(input.readline())
+        for index in range(n):
+            open(f"/mnt/shared/sorting/segment{index}.txt", 'w').close()
             with open(f"/mnt/shared/sorting/segment{index}.txt", 'a') as file:
-                # print(f"/mnt/shared/sorting/segment{index}.txt: {num}")
-                file.write(f"{num}\n")
-    for i in range(index + 1):
-        job = cluster.submit(f"/mnt/shared/sorting/segment{i}.txt")
-        jobs.append(job)
+                for x in range(math.ceil(N/n)):
+                    if total_numbers == N:
+                        break
+                    num = int(input.readline())
+                    file.write(f"{num}\n")
+                    total_numbers += 1
+                file.close()
+            job = cluster.submit(f"/mnt/shared/sorting/segment{index}.txt")
+            jobs.append(job)
+            index += 1
                 
     reading_time = (time.time() - start_time) / 60
     print(f"Reading took {reading_time} minutes")
