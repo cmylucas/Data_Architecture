@@ -9,7 +9,9 @@ from tqdm import tqdm
 
 file_path = "/usb/data1.set"
 N = int(sys.argv[1]) # Total amount of numbers to sort
-n = int(sys.argv[2]) # Number of divisions
+chunk_size = int(sys.argv[2])
+n = N/chunk_size
+# n = int(sys.argv[2]) # Number of divisions
 nodes = ["192.168.10.10", "192.168.10.20", "192.168.10.30", "192.168.10.40"]
 
 def checkRead(num):
