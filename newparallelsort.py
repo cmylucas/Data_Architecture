@@ -13,7 +13,6 @@ chunk_size = int(sys.argv[2])
 n = math.ceil(N/chunk_size) # number of chunks
 # n = int(sys.argv[2]) # Number of divisions
 nodes = ["192.168.10.10", "192.168.10.20", "192.168.10.30", "192.168.10.40"]
-file_size = os.path.getsize(file_path)
 
 # checks if end of file
 def checkRead(num):
@@ -22,7 +21,8 @@ def checkRead(num):
     return num
 
 # takes in chunk number, reads the chunk and bubble sorts
-def chunk_and_bubble(chunk_num):
+def chunk_and_bubble(chunk_num ,file_path):
+    file_size = os.path.getsize(file_path)
     def get_chunk(chunk_number):
         start_pos = chunk_size * chunk_number
         end_pos = chunk_size * (chunk_number + 1)
@@ -81,7 +81,7 @@ def main():
     start_time = time.time()
     cluster = dispy.JobCluster(chunk_and_bubble, nodes = nodes, host = "192.168.10.1")
     for chunk_num in range(n):
-        job = cluster.submit(chunk_num)
+        job = cluster.submit(chunk_num, file_path = f"/mnt{file_path}")
         jobs.append(job)
 
     stored_path = "/mnt/shared/sorting/final.txt"
