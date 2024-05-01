@@ -23,7 +23,7 @@ def checkRead(num):
 # takes in chunk number, reads the chunk and bubble sorts
 def chunk_and_bubble(chunk_num ,file_path):
     file_size = os.path.getsize(file_path)
-    def get_chunk(chunk_number):
+    def get_chunk(chunk_number, file_path, file_size):
         start_pos = chunk_size * chunk_number
         end_pos = chunk_size * (chunk_number + 1)
         with open(file_path, 'r') as f:
@@ -72,7 +72,7 @@ def chunk_and_bubble(chunk_num ,file_path):
                 file.write(f"{num}\n")
         return (path, hostname)
 
-    return bubble(arr = get_chunk(chunk_num), path = f"/mnt/shared/sorting/segment{chunk_num}.txt")
+    return bubble(arr = get_chunk(chunk_num, file_path, file_size), path = f"/mnt/shared/sorting/segment{chunk_num}.txt")
 
 def main():
     print(file_path)
