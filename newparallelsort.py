@@ -21,8 +21,9 @@ def checkRead(num):
     return num
 
 # takes in chunk number, reads the chunk and bubble sorts
-def chunk_and_bubble(chunk_num ,file_path):
+def chunk_and_bubble(chunk_num, file_path, chunk_size):
     file_size = os.path.getsize(file_path)
+    chunk_size = chunk_size * 9.9
     def get_chunk(chunk_number, file_path, file_size):
         start_pos = chunk_size * chunk_number
         end_pos = chunk_size * (chunk_number + 1)
@@ -49,7 +50,7 @@ def chunk_and_bubble(chunk_num ,file_path):
     
             f.seek(start_pos)
             arr = []
-            while f.tell() <= end_pos:
+            while f.tell() < end_pos:
                 arr.append(int(f.readline()))
             return arr
     def bubble(arr, path):
@@ -81,7 +82,7 @@ def main():
     start_time = time.time()
     cluster = dispy.JobCluster(chunk_and_bubble, nodes = nodes, host = "192.168.10.1")
     for chunk_num in range(n):
-        job = cluster.submit(chunk_num, file_path = f"/mnt{file_path}")
+        job = cluster.submit(chunk_num, file_path = f"/mnt{file_path}", chunk_size = chunk_size)
         jobs.append(job)
 
     stored_path = "/mnt/shared/sorting/final.txt"
@@ -90,7 +91,7 @@ def main():
     open(temp_path, 'w').close()
     for job in tqdm(jobs):
         segment_path, host = job()
-        print(f'{host} executed job {job.id}')
+        # print(f'{host} executed job {job.id}')
         # Recombine segment_path into stored_path
         with open(temp_path, 'r') as temp, open(segment_path, 'r') as segment, open(stored_path, 'w') as output:
             num1 = checkRead(temp.readline())
@@ -111,7 +112,6 @@ def main():
         shutil.copyfile(stored_path, temp_path)
     
     cluster.print_status()
-    print(f"Reading took {reading_time} minutes")
     print(f"Sorting {N} numbers with {n} subdivisions took {(time.time() - start_time)/60} minutes")
 
 if __name__ == "__main__":
