@@ -21,14 +21,14 @@ def checkRead(num):
     return num
 
 # takes in chunk number, reads the chunk and bubble sorts
-def chunk_and_bubble(chunk_num, file_path, chunk_size):
-    file_size = os.path.getsize(file_path)
-    chunk_size = chunk_size * 9.9
-    def get_chunk(chunk_number, file_path, file_size):
-        start_pos = chunk_size * chunk_number
-        end_pos = chunk_size * (chunk_number + 1)
-        with open(file_path, 'r') as f:
-            if chunk_number != 0:
+def chunk_and_bubble(chunk_number, path, size):
+    file_size = os.path.getsize(path)
+    size = size * 9.9
+    def get_chunk(chunknumber, filepath, chunksize, filesize):
+        start_pos = chunksize * chunknumber
+        end_pos = chunksize * (chunknumber + 1)
+        with open(filepath, 'r') as f:
+            if chunknumber != 0:
                 f.seek(start_pos)
                 byte = f.read(1)
                 while not byte == "\n":
@@ -37,8 +37,8 @@ def chunk_and_bubble(chunk_num, file_path, chunk_size):
                     byte = f.read(1)
                 start_pos += 1
     
-            if end_pos >= file_size:
-                end_pos = file_size
+            if end_pos >= filesize:
+                end_pos = filesize
             else:
                 f.seek(end_pos)
                 byte = f.read(1)
@@ -53,7 +53,7 @@ def chunk_and_bubble(chunk_num, file_path, chunk_size):
             while f.tell() < end_pos:
                 arr.append(int(f.readline()))
             return arr
-    def bubble(arr, path):
+    def bubble(arr, output_path):
         length = len(arr)
         hostname = socket.gethostname()
         for i in range(length - 1):
@@ -63,17 +63,17 @@ def chunk_and_bubble(chunk_num, file_path, chunk_size):
                     swapped = True
                     arr[j], arr[j + 1] = arr[j + 1], arr[j]
             if not swapped:
-                with open(path, 'w') as file:
+                with open(output_path, 'w') as file:
                     for num in arr:
                         file.write(f"{num}\n")
-                return (path, hostname)
+                return (output_path, hostname)
     
-        with open(path, 'w') as file:
+        with open(output_path, 'w') as file:
             for num in arr:
                 file.write(f"{num}\n")
-        return (path, hostname)
+        return (output_path, hostname)
 
-    return bubble(arr = get_chunk(chunk_num, file_path, file_size), path = f"/mnt/shared/sorting/segment{chunk_num}.txt")
+    return bubble(arr = get_chunk(chunk_number, path, size, file_size), output_path = f"/mnt/shared/sorting/segment{chunk_number}.txt")
 
 def main():
     print(file_path)
@@ -82,7 +82,7 @@ def main():
     start_time = time.time()
     cluster = dispy.JobCluster(chunk_and_bubble, nodes = nodes, host = "192.168.10.1")
     for chunk_num in range(n):
-        job = cluster.submit(chunk_num, file_path = f"/mnt{file_path}", chunk_size = chunk_size)
+        job = cluster.submit(chunk_number = chunk_num, path = f"/mnt{file_path}", size = chunk_size)
         jobs.append(job)
 
     stored_path = "/mnt/shared/sorting/final.txt"
@@ -109,6 +109,9 @@ def main():
             while num2:
                 output.write(f"{num2}\n")
                 num2 = checkRead(segment.readline())
+            temp.close()
+            segment.close()
+            output.close()
         shutil.copyfile(stored_path, temp_path)
     
     cluster.print_status()
