@@ -93,26 +93,29 @@ def main():
         segment_path, host = job()
         # print(f'{host} executed job {job.id}')
         # Recombine segment_path into stored_path
-        with open(temp_path, 'r') as temp, open(segment_path, 'r') as segment, open(stored_path, 'w') as output:
+        with open(stored_path, 'r') as temp, open(segment_path, 'r') as segment, open(temp_path, 'w') as output:
             num1 = checkRead(temp.readline())
             num2 = checkRead(segment.readline())
-            while num1 and num2:
+            # print(segment_path)
+            while num1 != "" and num2 != "":
                 if num1 <= num2:
                     output.write(f"{num1}\n")
                     num1 = checkRead(temp.readline())
                 else:
                     output.write(f"{num2}\n")
                     num2 = checkRead(segment.readline())
-            while num1:
+            while num1 != "":
                 output.write(f"{num1}\n")
                 num1 = checkRead(temp.readline())
-            while num2:
+            while num2 != "":
                 output.write(f"{num2}\n")
                 num2 = checkRead(segment.readline())
             temp.close()
             segment.close()
             output.close()
-        shutil.copyfile(stored_path, temp_path)
+        os.remove(stored_path)
+        os.rename(temp_path, stored_path)
+        # shutil.copyfile(stored_path, temp_path)
     
     cluster.print_status()
     print(f"Sorting {N} numbers with {n} subdivisions took {(time.time() - start_time)/60} minutes")
